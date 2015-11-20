@@ -20,9 +20,7 @@ CACHE_DIR=$2
 
 
 LIBSSH2_BUILD="$(mktmpdir libssh2)"
- 
 mkdir -p $CACHE_DIR/.tools/libssh2
-
 export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/libssh2/bin
 
 echo "-----> Fetching and installing libssh2"
@@ -33,6 +31,11 @@ cd libssh2-1.6.0
 ./configure
 make
 make install
+
+cd $BUILD_DIR
+mkdir -p $BUILD_DIR/bin
+cp $CACHE_DIR/.tools/libssh2/bin/libssh2 $BUILD_DIR/bin
+
 echo "libssh2 installed" | indent
 
 
@@ -46,9 +49,14 @@ cd $CURL_BUILD
 curl -O https://github.com/bagder/curl/releases/download/curl-7_45_0/curl-7.45.0.tar.gz
 tar -xvf curl-7.45.0.tar.gz
 cd curl-7.45.0
-./configure --with-libssh2=/usr/local
+./configure --with-libssh2=$CACHE_DIR/.tools
 make
 make install
+
+cd $BUILD_DIR
+mkdir -p $BUILD_DIR/bin
+cp $CACHE_DIR/.tools/curl/bin/curl $BUILD_DIR/bin
+
 echo "libssh2 installed" | indent
 
 
