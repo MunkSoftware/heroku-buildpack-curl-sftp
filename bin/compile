@@ -17,22 +17,38 @@ BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-WGET_BUILD="$(mktmpdir wget)"
 
-mkdir -p $CACHE_DIR/.tools/wget
 
-export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/wget/bin
+LIBSSH2_BUILD="$(mktmpdir libssh2)"
+ 
+mkdir -p $CACHE_DIR/.tools/libssh2
 
-echo "-----> Fetching and installing wget"
-cd $WGET_BUILD
-curl -O http://ftp.gnu.org/gnu/wget/wget-1.13.4.tar.bz2
-tar jxvf wget-1.13.4.tar.bz2
-cd wget-1.13.4
-./configure --prefix=$CACHE_DIR/.tools/wget --without-ssl
+export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/libssh2/bin
+
+echo "-----> Fetching and installing libssh2"
+cd $LIBSSH2_BUILD
+curl -O http://www.libssh2.org/download/libssh2-1.6.0.tar.gz
+tar jxvf libssh2-1.6.0.tar.gz
+cd libssh2-1.6.0
+./configure
 make
 make install
-echo "wget installed" | indent
+echo "libssh2 installed" | indent
 
-cd $BUILD_DIR
-mkdir -p $BUILD_DIR/bin
-cp $CACHE_DIR/.tools/wget/bin/wget $BUILD_DIR/bin
+
+
+CURL_BUILD="$(mktmpdir curl)"
+mkdir -p $CACHE_DIR/.tools/curl
+export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/curl/bin
+
+echo "-----> Fetching and installing curl"
+cd $CURL_BUILD
+curl -O https://github.com/bagder/curl/releases/download/curl-7_45_0/curl-7.45.0.tar.gz
+tar jxvf curl-7.45.0.tar.gz
+cd curl-7.45.0
+./configure --with-libssh2=/usr/local
+make
+make install
+echo "libssh2 installed" | indent
+
+
